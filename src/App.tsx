@@ -1,12 +1,14 @@
 import React from "react";
 import logo from './logo.svg';
 import './App.css';
-import Contact_list from "./components/contact_list";
+import HUbSpotDashboard from "./components/hubspotDashboard";
+import AppMenu from "./components/appMenu";
 
 function App() {
   return (
     <div className="App">
-      <Contact_list></Contact_list>
+            <AppMenu></AppMenu>
+            <HUbSpotDashboard></HUbSpotDashboard>
     </div>
   );
 }

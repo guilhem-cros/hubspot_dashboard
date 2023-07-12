@@ -1,4 +1,7 @@
-const contactEndPoint = 'https://api.hubapi.com/crm/v3/objects/contacts';
-const lifecycleStagesCountEndPoint = 'https://api.hubapi.com/contacts/search/v1/external/lifecyclestages';
+const proxyBaseURL = "http://localhost:8000"
+const lifecycleStagesCountEndPoint = proxyBaseURL + '/contacts/lifecyclestages/count/by/months';
+const countEndPoint = proxyBaseURL + '/contacts/lifecyclestages/total/count/';
+const contractsEndPoint = proxyBaseURL + '/deals/by/stage'
+const contactsByStageEndPoint = proxyBaseURL + '/contacts/by/lifecyclestage';
 
-export {contactEndPoint, lifecycleStagesCountEndPoint}
+export {lifecycleStagesCountEndPoint, countEndPoint, contractsEndPoint, contactsByStageEndPoint}
