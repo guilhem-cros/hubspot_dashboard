@@ -6,6 +6,7 @@ import { contractsStagesValues } from "../constants/hubspotAPIValues";
 import ContractsBarChart from "./charts/contractsBarChart";
 import { MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA } from "../constants/objectives";
 import {Hypnosis} from "react-cssfx-loading";
+import DealsTable from "./charts/dealsTable";
 
 const StyledContractsPanel = styled.div`
   margin: 0 1% 1%;
@@ -26,6 +27,19 @@ const StyledContractsPanel = styled.div`
     margin-bottom: 7%;
     text-align: center;
     margin-left: 47%;
+  }
+  
+  .global-tables{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    @media screen and (max-width: 1400px){
+      flex-direction: column;
+      >*{
+        width: 100%;
+      }
+    }
   }
 `;
 
@@ -83,12 +97,29 @@ const ContractsPanel: React.FC<Props> = () => {
         }
     };
 
+    const currentDate = new Date();
+    const twoYearsAgo = new Date(currentDate.getFullYear() - 2, currentDate.getMonth(), currentDate.getDate());
+
     return (
         <StyledContractsPanel ref={contractsPanelRef}>
             {isLoaded ?
-                <div className={"ca-charts"}>
-                    <ContractsBarChart concernsExpectedAmount={true} title={"CA devisé par mois (€)"} content={"CA devisé"} data={monthlySentContracts!} objective={MONTHLY_EXPECTED_CA} />
-                    <ContractsBarChart concernsExpectedAmount={false} title={"CA signé par mois (€)"} content={"CA signé"} data={monthlyWonContracts!} objective={MONTHLY_SIGNED_CA} />
+                <div>
+                    <div className={"ca-charts"}>
+                        <ContractsBarChart concernsExpectedAmount={true} title={"CA devisé par mois (€)"} content={"CA devisé"} data={monthlySentContracts!} objective={MONTHLY_EXPECTED_CA} />
+                        <ContractsBarChart concernsExpectedAmount={false} title={"CA signé par mois (€)"} content={"CA signé"} data={monthlyWonContracts!} objective={MONTHLY_SIGNED_CA} />
+                    </div>
+                    <div className={"global-tables"}>
+                        <DealsTable
+                            title={"Transactions devisées (depuis 2 ans)"}
+                            dealStage={"contractsent"}
+                            period={{dateTo: currentDate, dateFrom: twoYearsAgo}}
+                        />
+                        <DealsTable
+                            title={"Transactions signées (depuis 2 ans)"}
+                            dealStage={"closedwon"}
+                            period={{dateTo: currentDate, dateFrom: twoYearsAgo}}
+                        />
+                    </div>
                 </div>
                 :
                 <div  className={"bar-loader"}>

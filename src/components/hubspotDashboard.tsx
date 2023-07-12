@@ -24,6 +24,7 @@ import {Hypnosis} from "react-cssfx-loading";
 import {RiNumbersLine} from "react-icons/ri";
 import {PiTarget} from "react-icons/pi";
 import {MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA} from "../constants/objectives";
+import DealsTable from "./charts/dealsTable";
 
 const StyledList = styled.div`
 
@@ -52,13 +53,9 @@ const StyledList = styled.div`
     }
   }
   
-  .diagrams{
-    margin-top: 1%;
-  }
-  
   #details-title{
     text-align: center;
-    margin-top: 4%;
+    margin-top: 3%;
     margin-bottom: 2%;
     font-size: 1.8em;
   }
@@ -240,6 +237,22 @@ const StyledList = styled.div`
 
     @media screen and (max-width: 1000px){
       flex-direction: column;
+    }
+  }
+  
+  .current-month-deals-insight{
+    margin-top: 1.5%;
+    margin-left: 1.4%;
+    width: 98%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    @media screen and (max-width: 1400px){
+      flex-direction: column;
+      >*{
+        width: 100%;
+      }
     }
   }
 `
@@ -523,6 +536,9 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
     }
 
     const buildLastMonthInsights = () => {
+        const now = new Date();
+        const firstDayOfTheMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
         return (
             <div className={"last-month-insight"}>
                 <h2 className={"panel-title"}>Aperçu sur le mois courant</h2>
@@ -542,6 +558,10 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
                         {buildContractsAmountGrowthCharts("Montant devisé", MONTHLY_EXPECTED_CA, currentMonthContractsAmount?.contractSentAmount)}
                         {buildContractsAmountGrowthCharts("Montant signé", MONTHLY_SIGNED_CA, currentMonthContractsAmount?.closedWonAmount)}
                     </div>
+                    <div className={"current-month-deals-insight"}>
+                        <DealsTable dealStage={"contractsent"} title={"Devis envoyés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
+                        <DealsTable dealStage={"closedwon"} title={"Devis signés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
+                    </div>
                 </div>
                 {drawLine()}
             </div>
@@ -553,7 +573,6 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
             <div className={"line"}></div>
         )
     }
-
 
     return (
         <StyledList>

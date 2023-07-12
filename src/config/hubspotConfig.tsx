@@ -119,9 +119,12 @@ async function getContracts(dealStage: string|null, dateFrom: Date, dateTo: Date
         const data = response.data;
         data.forEach((contractJson: any)=>{
             const contract : Contract = {
+                company: contractJson.properties.dealname.split("-")[0],
                 amount: +contractJson.properties.amount,
                 montant_devise: +contractJson.properties.montant_devise,
-                stage: contractJson.properties.dealstage
+                stage: contractJson.properties.dealstage,
+                closedDate: contractJson.properties.closedate ? new Date(contractJson.properties.closedate) : null,
+                sentDate: new Date(contractJson.properties.createdate)
             }
             contracts.push(contract);
         })
@@ -185,5 +188,6 @@ export {
     getContractsTotalAmount,
     getTwoYearsContractsByMonth,
     getContactToCustomerAvgTime,
-    getCurrentMonthContractsAmount
+    getCurrentMonthContractsAmount,
+    getContracts
 };
