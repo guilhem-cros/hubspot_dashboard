@@ -74,8 +74,22 @@ interface Props {
     conditionalColoring : boolean
 }
 
+/**
+ * React component : display a tile containing a value and its title
+ * @param displayedValue the value displayed
+ * @param title the title of the tile
+ * @param subTitle subtitle of the tile
+ * @param isLoading true is must display a loading spin and hide the value, false if not
+ * @param icon the icon associated to the tile (displayed on bottom right)
+ * @param color the background color of the icon
+ * @param conditionalColoring true if value is a percent and must switch color in function of the value
+ * @constructor
+ */
 const NumberChart: React.FC<Props> = ({displayedValue, title, subTitle, isLoading, icon, color, conditionalColoring})=>{
 
+    /**
+     * Convert value to number
+     */
     const getNumber = (): number => {
         return parseInt(displayedValue);
     }

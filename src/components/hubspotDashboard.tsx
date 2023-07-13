@@ -258,7 +258,7 @@ const StyledList = styled.div`
 `
 
 interface Props{
-
+    notifyError: (error: string) => void;
 }
 
 /**
@@ -267,34 +267,46 @@ interface Props{
  * and build every necessary chart
  * @constructor
  */
-const HubSpotDashboard :React.FC<Props> = ()=>{
+const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
 
     /**
-     * Variable containing lifecycle stages metrics per month
+     * Variable containing lifecycle stages metrics per month, null if not fetched yet
      */
     const [lifecycleStagesPerMonth, setLifecycleStagesPerMonth] = useState<LifecycleCount[][]|null>(null);
 
     /**
-     * Variable containing lifecycle stages current counts
+     * Variable containing lifecycle stages current counts, null if not fetched yet
      */
     const [currentLifecycleStagesCount, setCurrentLifecycleStagesCount] = useState<LifecycleCount[]|null>(null);
 
+    /**
+     * Lifecycle stages count during the last 31 days, null if not fetched yet
+     */
    const [last31DaysStagesCount, setLast31DaysStagesCount] = useState<LifecycleCount[]|null>(null);
 
     /**
-     * True if datas have been fetched, false if not
+     * True if critical datas have been fetched, false if not
      */
     const [isLoaded, setIsLoaded]= useState(false);
 
     /**
-     * Contains the message of a potential error, null if no error occurs
+     * True if a critical data hasn't been fetched (causing an error), false if not
      */
-    const [fetchError, setFetchError] = useState<string|null>(null);
+    const [criticalError, setCriticalError] = useState(false);
 
+    /**
+     * Amount (€) of contracts won since January 1st of the current year, null if not fetched yet
+     */
     const [wonContractsAmount, setWonContractsAmount] = useState<number|null>(null);
 
+    /**
+     * Average time between the first talk with a contact and its associated won contract, null if not fetched yet
+     */
     const [avgConvertionTime, setAvgConvertionTime] = useState<number|null>(null);
 
+    /**
+     * Amount (€) of contract won and sent during current month, null if not fetched yet
+     */
     const [currentMonthContractsAmount, setCurentMonthContractsAmount] = useState<{closedWonAmount: number, contractSentAmount: number}|null>(null)
 
     /**
@@ -308,8 +320,11 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
         }
     });
 
+    /**
+     * When critical data has been loaded : fetch other data
+     */
     useEffect(()=>{
-        if (isLoaded && wonContractsAmount===null){
+        if (isLoaded && !criticalError){
             fetchWonContractsAmount();
             fetchAvgConvertionTime();
             fetchCurrentMonthContractsAmounts();
@@ -343,10 +358,12 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
             }
 
         } catch (error){
+            setCriticalError(true);
+            notifyError("Impossible d'accéder aux données. Patientez quelques minutes puis rafraichissez la page.")
             if(error instanceof Error){
-                setFetchError(error.message);
+                console.error(error)
             } else {
-                setFetchError('Unexpected error: ' + error);
+                console.error("Unexpected error: " + error);
             }
         }
     }
@@ -357,7 +374,8 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
                 setWonContractsAmount(value);
             })
             .catch((error)=>{
-                setFetchError(error.message);
+                console.error(error)
+                notifyError("Le montant du CA n'a pas pu être récupéré.");
             })
     }
 
@@ -367,7 +385,8 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
                 setAvgConvertionTime(value);
             })
             .catch((error)=>{
-                setFetchError(error.message);
+                console.error(error)
+                notifyError("Le temps moyen de négociation n'a pas pu être récupéré.");
             })
     }
 
@@ -376,7 +395,8 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
             .then((value)=>{
                 setCurentMonthContractsAmount(value);
             }).catch((error)=>{
-                setFetchError(error.message);
+            console.error(error)
+            notifyError("Les transactions concernant le mois courant n'ont pas pu être récupérées.");
         })
     }
 
@@ -456,6 +476,9 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
         )
     }
 
+    /**
+     * Build the global insight panel
+     */
     const buildInsights = () => {
         return (
             <div className={"insight"}>
@@ -484,6 +507,10 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
         )
     }
 
+    /**
+     * Build every chart concerning a lifecycle stage of contact in the current month
+     * @param lifecycleStage the lifecycle stage for which charts are built
+     */
     const buildGrowthCharts = (lifecycleStage: LifecycleStage) => {
         const monthlyCount = getMonthlyLifecycleStages(lifecycleStage.code);
         return (
@@ -510,6 +537,12 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
         )
     }
 
+    /**
+     * Build every chart concerning contract stage in the current month
+      * @param title title first of the chart
+     * @param objective the targeted objective per month
+     * @param amount the displayed value on the chart
+     */
     const buildContractsAmountGrowthCharts = (title: string, objective: number, amount: number |undefined) => {
         return (
             <div className={"contracts-growth-charts"}>
@@ -535,6 +568,9 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
         )
     }
 
+    /**
+     * Build the panel concerning current month
+     */
     const buildLastMonthInsights = () => {
         const now = new Date();
         const firstDayOfTheMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -559,8 +595,8 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
                         {buildContractsAmountGrowthCharts("Montant signé", MONTHLY_SIGNED_CA, currentMonthContractsAmount?.closedWonAmount)}
                     </div>
                     <div className={"current-month-deals-insight"}>
-                        <DealsTable dealStage={"contractsent"} title={"Devis envoyés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
-                        <DealsTable dealStage={"closedwon"} title={"Devis signés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
+                        <DealsTable handleError={notifyError} dealStage={contractsStagesValues.get("sent")!} title={"Devis envoyés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
+                        <DealsTable handleError={notifyError} dealStage={contractsStagesValues.get("won")!} title={"Devis signés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
                     </div>
                 </div>
                 {drawLine()}
@@ -582,7 +618,7 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
             </div>
             {isLoaded ?
                 <div>
-                    {fetchError===null ?
+                    {!criticalError &&
                         <div>
                             <div className={"insight-panel"}>
                                 {buildInsights()}
@@ -593,12 +629,10 @@ const HubSpotDashboard :React.FC<Props> = ()=>{
                                 {getLifecycleStageDetails()}
                                 <div className={"panel"}>
                                     <h2 className={"panel-title"}>Chiffre d'Affaire</h2>
-                                    <ContractsPanel/>
+                                    <ContractsPanel handleError={notifyError}/>
                                 </div>
                             </div>
                         </div>
-                        :
-                        <h2>Error: {fetchError}</h2>
                     }
                 </div>
                 :

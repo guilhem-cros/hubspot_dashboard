@@ -93,6 +93,10 @@ interface Props {
 
 }
 
+/**
+ * Menu of the app, opened with the burger-menu logo
+ * @constructor
+ */
 const AppMenu: React.FC<Props> = () => {
 
     return (

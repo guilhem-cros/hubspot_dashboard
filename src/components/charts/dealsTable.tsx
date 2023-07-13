@@ -5,6 +5,7 @@ import { Spin } from 'react-cssfx-loading';
 import { getContracts } from '../../config/hubspotConfig';
 import Period from '../../interfaces/period';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import {contractsStagesValues} from "../../constants/hubspotAPIValues";
 
 const StyledTable = styled.div`
   
@@ -34,6 +35,7 @@ interface Props {
     dealStage: string;
     title: string;
     period: Period;
+    handleError : (error: string)=> void;
 }
 
 interface SortConfig {
@@ -41,19 +43,36 @@ interface SortConfig {
     direction: 'asc' | 'desc';
 }
 
-const DealsTable: React.FC<Props> = ({ dealStage, title, period }) => {
+/**
+ * React component : displays a table containing deals and information associated.
+ * Fetch every deal in a specified period and matching a specified stage to display in table
+ * @param dealStage the stage of the deal
+ * @param title title of the chart
+ * @param period the period in which deals are searched
+ * @param handleError function handling error
+ * @constructor
+ */
+const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) => {
+
+    /**
+     * Contracts fetched and matching props, null if not fetched yet
+     */
     const [deals, setDeals] = useState<Contract[] | null>(null);
+
     const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
+    /**
+     * Called whenever props changed : fetch deals matching params
+     */
     useEffect(() => {
         if (deals === null) {
             getContracts(dealStage, period.dateFrom, period.dateTo)
                 .then((value) => {
                     setDeals(value);
-                    console.log(value)
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.error(error);
+                    handleError("L'ensemble des transactions n'a pas pu être récupéré.")
                 });
         }
     }, [deals, dealStage, period.dateFrom, period.dateTo]);
@@ -81,6 +100,9 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period }) => {
         })
         : null;
 
+    /**
+     * Building table and handling row sorting by column
+     */
     const buildTable = () => {
         return (
             <TableContainer component={Paper} className={"table-container"}>
@@ -114,7 +136,7 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period }) => {
                                     Date d'envoi du devis
                                 </TableSortLabel>
                             </TableCell>
-                            {dealStage.localeCompare('closedwon') === 0 && (
+                            {dealStage.localeCompare(contractsStagesValues.get("won")!) === 0 && (
                                 <>
                                     <TableCell className={'table-title'}>
                                         <TableSortLabel

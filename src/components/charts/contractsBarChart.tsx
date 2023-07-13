@@ -30,10 +30,26 @@ interface Props {
     objective: number|null
 }
 
+/**
+ * React Component : display a bar chart concerning deals
+ * @param concernsExpectedAmount true if the chart displayed concerns amounts of signed deal
+ * @param title the title of the chart
+ * @param content legend of the chart
+ * @param data the data used to build the chart (contracts per month)
+ * @param objective the targeted amount per month (displayed as a red line on the graph)
+ * @constructor
+ */
 const ContractsBarChart: React.FC<Props> = ({concernsExpectedAmount, title, content, data, objective}) => {
 
+    /**
+     * The amount in € per month
+     */
     const [totalValuePerMonth, setTotalValuePerMonth] = useState<{period: Period, value: number}[]|null>(null);
 
+    /**
+     * Called whenever the data to displayed are updated
+     * Calculates the total contrats amount per month
+     */
     useEffect(()=>{
         const valuePerMonth : {period: Period, value: number}[] = []
         data.forEach((month)=>{

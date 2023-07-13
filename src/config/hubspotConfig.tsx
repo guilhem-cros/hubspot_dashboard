@@ -10,6 +10,7 @@ import {generateTwoYearsFromMonths} from "../interfaces/period";
 import Contract from "../interfaces/contract";
 import MonthlyContracts from "../interfaces/monthlyContracts";
 import Contact, {getAvgConvertionTime} from "../interfaces/contact";
+import {contractsStagesValues} from "../constants/hubspotAPIValues";
 
 /**
  * Calls proxy/hubspot API. Get the lifecycle stages metrics for contacts concerning a specified period.
@@ -72,6 +73,12 @@ async function getCurrentCountByLifecycles(): Promise<LifecycleCount[]>{
     }
 }
 
+/**
+ * Calls proxy/hubspot API. Get every contacts matching a specified stage
+ * @param stage the stage name that contacts must match
+ * @return the list of contact matching the stage
+ * @throws an error if an error occurs requesting proxy/hubspot API.
+ */
 async function getContactsByStage(stage: string|null): Promise<Contact[]>{
     let url = contactsByStageEndPoint;
     url = stage === null ? url : url + "?stage="+stage;
@@ -99,6 +106,10 @@ async function getContactsByStage(stage: string|null): Promise<Contact[]>{
     }
 }
 
+/**
+ * Calculates the average time between first talk with a contact and associated first closed contract
+ * @return the average time
+ */
 async function getContactToCustomerAvgTime(): Promise<number>{
     const customers = await getContactsByStage("customer");
     if(customers.length>0){
@@ -108,7 +119,12 @@ async function getContactToCustomerAvgTime(): Promise<number>{
     }
 }
 
-
+/**
+ * Calls Proxy/Hubspot API. Get every deal in a specified period and matching specified stage
+ * @param dealStage the stage in which deals must be
+ * @param dateFrom begin date of the period
+ * @param dateTo end date of the period
+ */
 async function getContracts(dealStage: string|null, dateFrom: Date, dateTo: Date): Promise<Contract[]>{
     let url = contractsEndPoint + "?since="+dateFrom.getTime()+"&to="+dateTo.getTime();
     url = dealStage===null ? url : url + "&stage="+dealStage;
@@ -147,17 +163,22 @@ async function getContractsTotalAmount(dealStage: string|null): Promise<number>{
     return total;
 }
 
+/**
+ * Calls Proxy/Hubspot API. Get every deal of the current month matching closedwon or contractsent stage
+ * and then calculte the total closedWonAmount and contractSentAmount for this month.
+ * @return an object containing both total closedWonAmount and contractSentAmount for current month
+ */
 async function getCurrentMonthContractsAmount(): Promise<{closedWonAmount: number, contractSentAmount: number}>{
     const now = new Date();
     const firstDayOfTheMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const wonContracts = await getContracts("closedwon", firstDayOfTheMonth, now);
+    const wonContracts = await getContracts(contractsStagesValues.get("won")!, firstDayOfTheMonth, now);
     let wonAmount: number = 0;
     wonContracts.forEach((contract: Contract)=>{
         wonAmount += contract.amount;
     });
 
-    const sentContracts = await getContracts("contractsent", firstDayOfTheMonth, now);
+    const sentContracts = await getContracts(contractsStagesValues.get("sent")!, firstDayOfTheMonth, now);
     let sentAmount: number = 0;
     sentContracts.forEach((contract: Contract)=>{
         sentAmount += contract.montant_devise;
@@ -165,6 +186,10 @@ async function getCurrentMonthContractsAmount(): Promise<{closedWonAmount: numbe
     return {closedWonAmount: wonAmount, contractSentAmount: sentAmount};
 }
 
+/**
+ * Get every deals matching specified dealStage from the last 2 years
+ * @param dealStage stage that deals must match
+ */
 async function getTwoYearsContractsByMonth(dealStage: string|null): Promise<MonthlyContracts[]>{
     const months = generateTwoYearsFromMonths();
     const contractsByMonth : MonthlyContracts[] = [];

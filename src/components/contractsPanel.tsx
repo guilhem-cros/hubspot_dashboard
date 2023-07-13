@@ -44,15 +44,34 @@ const StyledContractsPanel = styled.div`
 `;
 
 interface Props {
-
+    handleError : (error: string)=> void;
 }
 
-const ContractsPanel: React.FC<Props> = () => {
+/**
+ * React component : Builds the panel linked to deals containing charts and tables
+ * @param handleError function handling error during data fetching
+ * @constructor
+ */
+const ContractsPanel: React.FC<Props> = ({handleError}) => {
 
+    /**
+     * List of contracts won per month, null if not fetched
+     */
     const [monthlyWonContracts, setMonthlyWonContracts] = useState<MonthlyContracts[] | null>(null);
+
+    /**
+     * List of contracts sent per month, null is not fetched
+     */
     const [monthlySentContracts, setMonthlySentContracts] = useState<MonthlyContracts[] | null>(null);
+
+    /**
+     * true if critical data has been loaded, false if not
+     */
     const [isLoaded, setIsLoaded] = useState(false);
 
+    /**
+     * Ref to the current component in html
+     */
     const contractsPanelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -77,6 +96,9 @@ const ContractsPanel: React.FC<Props> = () => {
         }
     };
 
+    /**
+     * Fetch necessary data
+     */
     const fetchContracts = async () => {
         try {
             if (monthlySentContracts === null) {
@@ -89,10 +111,11 @@ const ContractsPanel: React.FC<Props> = () => {
                 setMonthlyWonContracts(contracts);
             }
         } catch (error) {
+            handleError("Les transactions n'ont pas pu être récupérées");
             if (error instanceof Error) {
-                console.log(error.message);
+                console.error(error.message);
             } else {
-                console.log("Unexpected error: " + error);
+                console.error("Unexpected error: " + error);
             }
         }
     };
@@ -111,13 +134,15 @@ const ContractsPanel: React.FC<Props> = () => {
                     <div className={"global-tables"}>
                         <DealsTable
                             title={"Transactions devisées (depuis 2 ans)"}
-                            dealStage={"contractsent"}
+                            dealStage={contractsStagesValues.get("sent")!}
                             period={{dateTo: currentDate, dateFrom: twoYearsAgo}}
+                            handleError={handleError}
                         />
                         <DealsTable
                             title={"Transactions signées (depuis 2 ans)"}
-                            dealStage={"closedwon"}
+                            dealStage={contractsStagesValues.get("won")!}
                             period={{dateTo: currentDate, dateFrom: twoYearsAgo}}
+                            handleError={handleError}
                         />
                     </div>
                 </div>
