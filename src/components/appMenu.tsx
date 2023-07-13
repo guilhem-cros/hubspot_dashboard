@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import namedLogo from '../assets/images/stride_logo_name.png';
+import { Link } from "react-router-dom";
 
 // @ts-ignore
 import { slide as Menu } from 'react-burger-menu'
@@ -105,8 +106,8 @@ const AppMenu: React.FC<Props> = () => {
                 <div id={"menu-title-logo"}>
                     <img id={"named-logo"} src={namedLogo} width={"100%"} alt="Logo Stride"/>
                 </div>
-                <a id="hubspot-dashboard" href="/">Dashboard Hubspot</a>
-                <a id="activity-dashboard" href="/activity">Dashboard activité</a>
+                <Link id="hubspot-dashboard" to="/dashboard/hubspot">Dashboard Hubspot </Link>
+                <Link id="activity-dashboard" to="/signin">Dashboard activité</Link>
             </Menu>
         </StyledMenu>
     )

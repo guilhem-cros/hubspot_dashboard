@@ -19,7 +19,6 @@ import ContractsPanel from "./contractsPanel";
 import {BsGraphUpArrow} from "react-icons/bs";
 import {RxLapTimer} from "react-icons/rx";
 import {MdAttachMoney} from "react-icons/md";
-import logo from '../assets/images/stride_logo.png';
 import {Hypnosis} from "react-cssfx-loading";
 import {RiNumbersLine} from "react-icons/ri";
 import {PiTarget} from "react-icons/pi";
@@ -128,37 +127,6 @@ const StyledList = styled.div`
 
     @media screen and (max-width: 600px){
       width: 95%;
-    }
-  }
-  
-  .page-title{
-    padding-right: 20px;
-    margin-bottom: 1.5%;
-    color: #b8b7ad;
-    background-color: #373a47;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-    justify-content: flex-end;
-
-    @media screen and (max-width: 450px){
-      justify-content: flex-start;
-      padding-right: 0;
-      padding-left: 36px;
-      padding-top: 45px;
-    }
-
-    @media screen and (max-width: 320px){
-      padding-left: 0;
-      justify-content: center;
-    }
-    
-    >h1{
-      padding-bottom: 7px;
-      @media screen and (max-width: 400px){
-        font-size: 1.5em;
-      }
     }
   }
   
@@ -612,10 +580,6 @@ const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
 
     return (
         <StyledList>
-            <div className={"page-title"}>
-                <h1>Dashboard Hubspot</h1>
-                <img src={logo} alt={"Logo Stride"} height={25}/>
-            </div>
             {isLoaded ?
                 <div>
                     {!criticalError &&

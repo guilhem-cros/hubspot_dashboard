@@ -1,4 +1,4 @@
-const proxyBaseURL = "https://encouraging-petticoat-frog.cyclic.app/"
+const proxyBaseURL = "https://panicky-tie-slug.cyclic.app"
 const lifecycleStagesCountEndPoint = proxyBaseURL + '/contacts/lifecyclestages/count/by/months';
 const countEndPoint = proxyBaseURL + '/contacts/lifecyclestages/total/count/';
 const contractsEndPoint = proxyBaseURL + '/deals/by/stage'

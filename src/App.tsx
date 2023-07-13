@@ -1,33 +1,24 @@
 import React from "react";
-import logo from './logo.svg';
 import './App.css';
-import HUbSpotDashboard from "./components/hubspotDashboard";
-import AppMenu from "./components/appMenu";
-import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import SignIn from "./pages/SignIn";
+import HubspotDashboard from "./pages/HubspotDashboard";
+import Error404 from "./pages/Error404";
 
 function App() {
 
-    const notifyError = (error: string) => {
-        toast.error(error);
-    }
-
   return (
     <div className="App">
-        <AppMenu></AppMenu>
-        <HUbSpotDashboard notifyError={notifyError}></HUbSpotDashboard>
-        <ToastContainer
-            position="bottom-right"
-            autoClose={7000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-        />
+        <BrowserRouter>
+            <Routes>
+                <Route path={"/signin"} element={<SignIn/>}/>
+                <Route path={"/"} element={<HubspotDashboard/>}/>
+                <Route path={"/home"} element={<HubspotDashboard/>}/>
+                <Route path={"/dashboard/hubspot"} element={<HubspotDashboard/>}/>
+                <Route path={"*"} element={<Error404/>}/>
+            </Routes>
+        </BrowserRouter>
     </div>
   );
 }
