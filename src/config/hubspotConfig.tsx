@@ -21,12 +21,7 @@ import {contractsStagesValues} from "../constants/hubspotAPIValues";
  * @throws an error if problems occurs during the request
  */
 async function getLifecycleStages(dateTo: number, dateFrom: number): Promise<LifecycleCount[]> {
-    const response = await axios.get(lifecycleStagesCountEndPoint + "?from="+dateFrom+"&to="+dateTo, {
-        headers: {
-            Authorization: 'Bearer ' + process.env.REACT_APP_HUBSPOT_PRIVATE_APP_TOKEN,
-            "Content-Type": "application/json"
-        },
-    });
+    const response = await axios.get(lifecycleStagesCountEndPoint + "?from="+dateFrom+"&to="+dateTo);
     if(response.status===200) {
         return JSON.parse(response.data) as LifecycleCount[];
     } else {
