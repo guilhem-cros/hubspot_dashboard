@@ -16,6 +16,7 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "axios": "^1.4.0",
+    "fs": "^0.0.1-security",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",
     "react-cssfx-loading": "^2.1.0",

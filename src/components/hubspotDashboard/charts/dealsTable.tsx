@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Contract from '../../interfaces/contract';
+import Contract from '../../../interfaces/contract';
 import { Spin } from 'react-cssfx-loading';
-import { getContracts } from '../../config/hubspotConfig';
-import Period from '../../interfaces/period';
+import { getContracts } from '../../../config/hubspotConfig';
+import Period from '../../../interfaces/period';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
-import {contractsStagesValues} from "../../constants/hubspotAPIValues";
+import {contractsStagesValues} from "../../../constants/hubspotAPIValues";
 
 const StyledTable = styled.div`
   
@@ -32,7 +32,7 @@ const StyledTable = styled.div`
 `;
 
 interface Props {
-    dealStage: string;
+    dealStage: string|null;
     title: string;
     period: Period;
     handleError : (error: string)=> void;
@@ -136,7 +136,7 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
                                     Date d'envoi du devis
                                 </TableSortLabel>
                             </TableCell>
-                            {dealStage.localeCompare(contractsStagesValues.get("won")!) === 0 && (
+                            {(dealStage!==null && dealStage!.localeCompare(contractsStagesValues.get("won")!) === 0) && (
                                 <>
                                     <TableCell className={'table-title'}>
                                         <TableSortLabel
@@ -162,7 +162,9 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
                     </TableHead>
                     <TableBody>
                         {sortedDeals!.length>0 ? (
-                            sortedDeals!.map((deal, index) => (
+                            sortedDeals!.map((deal, index) => {
+                                if(dealStage!==null || deal.stage.localeCompare(contractsStagesValues.get("won")!)!==0){
+                                return(
                                 <TableRow key={index}>
                                     <TableCell>{deal.company}</TableCell>
                                     <TableCell>{deal.montant_devise + " €"}</TableCell>
@@ -173,7 +175,7 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
                                             year: 'numeric',
                                         })}
                                     </TableCell>
-                                    {dealStage.localeCompare('closedwon') === 0 && (
+                                    {(dealStage!==null && dealStage!.localeCompare('closedwon') === 0) && (
                                         <>
                                             <TableCell>{deal.amount + " €"}</TableCell>
                                             <TableCell>
@@ -186,7 +188,7 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
                                         </>
                                     )}
                                 </TableRow>
-                            ))
+                            )}})
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={5} align="center" className={"no-deals-found"}>

@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components';
-import MonthlyContracts from "../../interfaces/monthlyContracts";
-import Period from "../../interfaces/period";
+import MonthlyContracts from "../../../interfaces/monthlyContracts";
+import Period from "../../../interfaces/period";
 import {
     Bar,
     BarChart,
@@ -63,6 +63,14 @@ const ContractsBarChart: React.FC<Props> = ({concernsExpectedAmount, title, cont
         setTotalValuePerMonth(valuePerMonth);
     }, [data])
 
+    // Calculate the maximum value between the data points and the objective
+    const maxValue = useMemo(() => {
+        if (!totalValuePerMonth) return 0;
+
+        const dataValues = totalValuePerMonth.map((item) => item.value);
+        return Math.max(...dataValues, objective || 0);
+    }, [totalValuePerMonth, objective]);
+
     /**
      * Formats how the values are displayed on the X Axis -> "Month YEAR"
      * @param tickItem
@@ -119,7 +127,7 @@ const ContractsBarChart: React.FC<Props> = ({concernsExpectedAmount, title, cont
                         >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="period.dateTo" tickFormatter={formatXAxis}/>
-                            <YAxis dataKey="value"/>
+                            <YAxis dataKey="value" domain={[0, maxValue]} />
                             <Tooltip content={<CustomTooltip />}/>
                             <Legend align="right" verticalAlign="top" formatter={() => {return content;}}/>
                             <Bar dataKey="value" fill="#8884d8" strokeWidth={1.5}  background={{ fill: '#eee' }} />

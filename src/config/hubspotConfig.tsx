@@ -90,7 +90,8 @@ async function getContactsByStage(stage: string|null): Promise<Contact[]>{
                 email: contactData.properties.email,
                 closedate: contactData.properties.closedate ? new Date(contactData.properties.closedate) : null,
                 createddate: new Date(contactData.properties.createdate),
-                leaddate: contactData.properties.hs_lifecyclestage_lead_date ? new Date(contactData.properties.hs_lifecyclestage_lead_date) : null
+                leaddate: contactData.properties.hs_lifecyclestage_lead_date ? new Date(contactData.properties.hs_lifecyclestage_lead_date) : null,
+                subscriberDate: contactData.properties.hs_lifecyclestage_subscriber_date ? new Date(contactData.properties.hs_lifecyclestage_subscriber_date) : null,
             }
         }));
 
@@ -105,12 +106,12 @@ async function getContactsByStage(stage: string|null): Promise<Contact[]>{
  * Calculates the average time between first talk with a contact and associated first closed contract
  * @return the average time
  */
-async function getContactToCustomerAvgTime(): Promise<number>{
+async function getContactToCustomerAvgTime(): Promise<[number|null, number|null]>{
     const customers = await getContactsByStage("customer");
     if(customers.length>0){
-        return getAvgConvertionTime(customers)!;
+        return getAvgConvertionTime(customers);
     } else {
-        return -1;
+        return [-1, -1];
     }
 }
 
@@ -173,7 +174,7 @@ async function getCurrentMonthContractsAmount(): Promise<{closedWonAmount: numbe
         wonAmount += contract.amount;
     });
 
-    const sentContracts = await getContracts(contractsStagesValues.get("sent")!, firstDayOfTheMonth, now);
+    const sentContracts = await getContracts(null, firstDayOfTheMonth, now);
     let sentAmount: number = 0;
     sentContracts.forEach((contract: Contract)=>{
         sentAmount += contract.montant_devise;

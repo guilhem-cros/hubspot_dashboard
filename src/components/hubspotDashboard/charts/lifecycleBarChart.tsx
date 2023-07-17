@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {
     XAxis,
     YAxis,
@@ -11,7 +11,7 @@ import {
 
 
 import styled from 'styled-components';
-import LifecycleCount from "../../interfaces/lifecycleCount";
+import LifecycleCount from "../../../interfaces/lifecycleCount";
 
 
 const StyledChart = styled.div`
@@ -48,6 +48,14 @@ interface Props {
  * @constructor
  */
 const LifecycleBarChart :React.FC<Props> = ({title, content, data, objective})=> {
+
+    // Calculate the maximum value between the data points and the objective
+    const maxValue = useMemo(() => {
+        if (!data) return 0;
+
+        const dataValues = data.map((item) => item.count);
+        return Math.max(...dataValues, objective || 0);
+    }, [data, objective]);
 
     /**
      * Formats how the values are displayed on the X Axis -> "Month YEAR"
@@ -101,7 +109,7 @@ const LifecycleBarChart :React.FC<Props> = ({title, content, data, objective})=>
                     >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="period.dateTo" tickFormatter={formatXAxis}/>
-                        <YAxis/>
+                        <YAxis domain={[0, maxValue]} />
                         <Tooltip content={<CustomTooltip />}/>
                         <Legend align="right" verticalAlign="top" formatter={() => {return content;}}/>
                         <Bar dataKey="count" fill="#82CA9D" />

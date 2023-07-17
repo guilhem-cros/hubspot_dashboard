@@ -5,24 +5,24 @@ import {
     getContractsTotalAmount,
     getCurrentCountByLifecycles, getCurrentMonthContractsAmount, getLifecycleStages,
     getTwoYearsLifecycleStagesCountsByMonth
-} from "../config/hubspotConfig";
+} from "../../config/hubspotConfig";
 import LifecycleCount, {
     getLifecycleCountByStage,
     getStageCurrentTotalAndToConvertCount
-} from "../interfaces/lifecycleCount";
+} from "../../interfaces/lifecycleCount";
 import LifecycleBarChart from "./charts/lifecycleBarChart";
 import InfoChart from "./charts/infoChart";
-import LifecycleStage, {createLifecycleStage} from "../interfaces/lifecycleStage";
-import {contractsStagesValues, lifecycleStagesCodesAndValues} from "../constants/hubspotAPIValues";
+import LifecycleStage, {createLifecycleStage} from "../../interfaces/lifecycleStage";
+import {contractsStagesValues, lifecycleStagesCodesAndValues} from "../../constants/hubspotAPIValues";
 import NumberChart from "./charts/numberChart";
-import ContractsPanel from "./contractsPanel";
+import ContractsPanel from "./panels/contractsPanel";
 import {BsGraphUpArrow} from "react-icons/bs";
 import {RxLapTimer} from "react-icons/rx";
 import {MdAttachMoney} from "react-icons/md";
 import {Hypnosis} from "react-cssfx-loading";
 import {RiNumbersLine} from "react-icons/ri";
 import {PiTarget} from "react-icons/pi";
-import {MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA} from "../constants/objectives";
+import {MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA} from "../../constants/objectives";
 import DealsTable from "./charts/dealsTable";
 
 const StyledList = styled.div`
@@ -109,7 +109,8 @@ const StyledList = styled.div`
     flex-direction: row;
     justify-content: center;
 
-    @media screen and (max-width: 600px){
+    @media screen and (max-width: 1000px){
+      align-items: center;
       flex-direction: column;
     }
   }
@@ -121,11 +122,7 @@ const StyledList = styled.div`
       width: 33%;
     }
 
-    @media screen and (max-width: 900px){
-      width: 45%;
-    }
-
-    @media screen and (max-width: 600px){
+    @media screen and (max-width: 1000px){
       width: 95%;
     }
   }
@@ -235,7 +232,7 @@ interface Props{
  * and build every necessary chart
  * @constructor
  */
-const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
+const Dashboard :React.FC<Props> = ({notifyError})=>{
 
     /**
      * Variable containing lifecycle stages metrics per month, null if not fetched yet
@@ -271,6 +268,8 @@ const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
      * Average time between the first talk with a contact and its associated won contract, null if not fetched yet
      */
     const [avgConvertionTime, setAvgConvertionTime] = useState<number|null>(null);
+
+    const [avgSignTime, setAvgSignTime] = useState<number|null>(null);
 
     /**
      * Amount (€) of contract won and sent during current month, null if not fetched yet
@@ -350,7 +349,8 @@ const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
     const fetchAvgConvertionTime = () => {
         getContactToCustomerAvgTime()
             .then((value)=>{
-                setAvgConvertionTime(value);
+                setAvgConvertionTime(value[0]);
+                setAvgSignTime(value[1])
             })
             .catch((error)=>{
                 console.error(error)
@@ -462,6 +462,15 @@ const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
                         conditionalColoring={false}
                     />
                     <NumberChart
+                        title={"Temps de signature moyen"}
+                        subTitle={"A partir de l'envoi du contrat"}
+                        displayedValue={avgSignTime?.toFixed(0) + " jours"}
+                        isLoading={avgConvertionTime===null}
+                        icon={<RxLapTimer color={"white"} size={"1.8em"}/>}
+                        color={"#F8B114"}
+                        conditionalColoring={false}
+                    />
+                    <NumberChart
                         title={"Montant de devis signé"}
                         subTitle={"Depuis le 1er Janvier "+ (new Date()).getFullYear()}
                         isLoading={wonContractsAmount===null}
@@ -563,7 +572,7 @@ const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
                         {buildContractsAmountGrowthCharts("Montant signé", MONTHLY_SIGNED_CA, currentMonthContractsAmount?.closedWonAmount)}
                     </div>
                     <div className={"current-month-deals-insight"}>
-                        <DealsTable handleError={notifyError} dealStage={contractsStagesValues.get("sent")!} title={"Devis envoyés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
+                        <DealsTable handleError={notifyError} dealStage={null} title={"Devis envoyés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
                         <DealsTable handleError={notifyError} dealStage={contractsStagesValues.get("won")!} title={"Devis signés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>
                     </div>
                 </div>
@@ -611,4 +620,4 @@ const HubSpotDashboard :React.FC<Props> = ({notifyError})=>{
 
 }
 
-export default HubSpotDashboard;
+export default Dashboard;

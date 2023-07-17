@@ -1,5 +1,5 @@
 import {toast, ToastContainer} from "react-toastify";
-import HUbSpotDashboard from "../components/hubspotDashboard";
+import Dashboard from "../components/hubspotDashboard/dashboard";
 import React from "react";
 import AppMenu from "../components/appMenu";
 import logo from "../assets/images/stride_logo.png";
@@ -52,7 +52,7 @@ const HubspotDashboard = () => {
                 <h1>Dashboard Hubspot</h1>
                 <img src={logo} alt={"Logo Stride"} height={25}/>
             </div>
-            <HUbSpotDashboard notifyError={notifyError}></HUbSpotDashboard>
+            <Dashboard notifyError={notifyError}></Dashboard>
             <ToastContainer
                 position="bottom-right"
                 autoClose={7000}

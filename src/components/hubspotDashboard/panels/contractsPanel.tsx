@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import MonthlyContracts from "../interfaces/monthlyContracts";
-import { getTwoYearsContractsByMonth } from "../config/hubspotConfig";
-import { contractsStagesValues } from "../constants/hubspotAPIValues";
-import ContractsBarChart from "./charts/contractsBarChart";
-import { MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA } from "../constants/objectives";
+import MonthlyContracts from "../../../interfaces/monthlyContracts";
+import { getTwoYearsContractsByMonth } from "../../../config/hubspotConfig";
+import { contractsStagesValues } from "../../../constants/hubspotAPIValues";
+import ContractsBarChart from "../charts/contractsBarChart";
+import { MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA } from "../../../constants/objectives";
 import {Hypnosis} from "react-cssfx-loading";
-import DealsTable from "./charts/dealsTable";
+import DealsTable from "../charts/dealsTable";
 
 const StyledContractsPanel = styled.div`
   margin: 0 1% 1%;
@@ -133,13 +133,13 @@ const ContractsPanel: React.FC<Props> = ({handleError}) => {
                     </div>
                     <div className={"global-tables"}>
                         <DealsTable
-                            title={"Transactions devisées (depuis 2 ans)"}
-                            dealStage={contractsStagesValues.get("sent")!}
+                            title={"Transactions devisées"}
+                            dealStage={null}
                             period={{dateTo: currentDate, dateFrom: twoYearsAgo}}
                             handleError={handleError}
                         />
                         <DealsTable
-                            title={"Transactions signées (depuis 2 ans)"}
+                            title={"Transactions signées"}
                             dealStage={contractsStagesValues.get("won")!}
                             period={{dateTo: currentDate, dateFrom: twoYearsAgo}}
                             handleError={handleError}
