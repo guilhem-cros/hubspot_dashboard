@@ -349,8 +349,8 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
     const fetchAvgConvertionTime = () => {
         getContactToCustomerAvgTime()
             .then((value)=>{
-                setAvgConvertionTime(value[0]);
-                setAvgSignTime(value[1])
+                setAvgConvertionTime(value[0]===null ? -1 : value[0]);
+                setAvgSignTime(value[1]===null ? -1 : value[1])
             })
             .catch((error)=>{
                 console.error(error)

@@ -13,27 +13,25 @@ export default interface Contact {
 }
 
 function getConvertionTime(contact: Contact): [number | null, number | null] {
-    if (contact.lifecycleStage.localeCompare('customer') === 0) {
+    if (contact.lifecycleStage.localeCompare('customer') === 0 && contact.properties.createddate!.getTime() >= (new Date('2023-05-01')).getTime()) {
         const leadDate = contact.properties.leaddate;
         const closeDate = contact.properties.closedate;
         const createDate = contact.properties.createddate;
         const subscriberDate = contact.properties.subscriberDate;
 
-        const startDate = leadDate || createDate;
+        const startDate = leadDate!==null ?  leadDate : createDate;
 
         if (closeDate && startDate) {
             const startTime = new Date(startDate).getTime();
             const endTime = new Date(closeDate).getTime();
             const timeDiff = endTime - startTime;
             const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-
             let subscriberToCloseDaysDiff = null;
             if (subscriberDate) {
                 const subscriberTime = new Date(subscriberDate).getTime();
                 const subscriberToCloseTimeDiff = endTime - subscriberTime;
                 subscriberToCloseDaysDiff = Math.ceil(subscriberToCloseTimeDiff / (1000 * 60 * 60 * 24));
             }
-
             return [daysDiff, subscriberToCloseDaysDiff];
         }
     }
@@ -52,9 +50,12 @@ export function getAvgConvertionTime(contacts: Contact[]): [number | null, numbe
             (acc, [days, subscriberToCloseDays]) => acc + (subscriberToCloseDays !== null ? subscriberToCloseDays : 0),
             0
         );
-        const averageDays = totalDays / filteredConversionTimes.length;
-        const averageSubscriberToCloseDays =
-            totalSubscriberToCloseDays !== 0 ? totalSubscriberToCloseDays / filteredConversionTimes.length : null;
+
+        const totalValidContacts = filteredConversionTimes.filter(([days, _]) => days !== null).length;
+        const totalContactsWithSubscriberData = filteredConversionTimes.filter(([_, subscriberToCloseDays]) => subscriberToCloseDays !== null).length;
+
+        const averageDays = totalDays / totalValidContacts;
+        const averageSubscriberToCloseDays = totalContactsWithSubscriberData > 0 ? totalSubscriberToCloseDays / totalContactsWithSubscriberData : null;
 
         return [averageDays, averageSubscriberToCloseDays];
     }
