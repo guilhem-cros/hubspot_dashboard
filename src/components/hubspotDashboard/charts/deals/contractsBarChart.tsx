@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components';
-import MonthlyContracts from "../../../interfaces/monthlyContracts";
-import Period from "../../../interfaces/period";
+import MonthlyContracts from "../../../../interfaces/monthlyContracts";
+import Period from "../../../../interfaces/period";
 import {
     Bar,
     BarChart,
@@ -118,10 +118,10 @@ const ContractsBarChart: React.FC<Props> = ({concernsExpectedAmount, title, cont
                         <BarChart
                             data={totalValuePerMonth!}
                             margin={{
-                                top: 10,
-                                right: 30,
-                                left: 20,
-                                bottom: 10,
+                                top: 8,
+                                right: 25,
+                                left: 15,
+                                bottom: 8,
                             }}
                             barSize={20}
                         >

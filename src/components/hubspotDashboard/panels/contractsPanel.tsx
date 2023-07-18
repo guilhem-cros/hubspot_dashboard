@@ -3,10 +3,11 @@ import styled from 'styled-components';
 import MonthlyContracts from "../../../interfaces/monthlyContracts";
 import { getTwoYearsContractsByMonth } from "../../../config/hubspotConfig";
 import { contractsStagesValues } from "../../../constants/hubspotAPIValues";
-import ContractsBarChart from "../charts/contractsBarChart";
+import ContractsBarChart from "../charts/deals/contractsBarChart";
 import { MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA } from "../../../constants/objectives";
 import {Hypnosis} from "react-cssfx-loading";
-import DealsTable from "../charts/dealsTable";
+import DealsTable from "../charts/deals/dealsTable";
+import DuoLineChart from "../charts/deals/duoLineChart";
 
 const StyledContractsPanel = styled.div`
   margin: 0 1% 1%;
@@ -120,8 +121,10 @@ const ContractsPanel: React.FC<Props> = ({handleError}) => {
         }
     };
 
+
     const currentDate = new Date();
     const twoYearsAgo = new Date(currentDate.getFullYear() - 2, currentDate.getMonth(), currentDate.getDate());
+
 
     return (
         <StyledContractsPanel ref={contractsPanelRef}>
@@ -130,6 +133,9 @@ const ContractsPanel: React.FC<Props> = ({handleError}) => {
                     <div className={"ca-charts"}>
                         <ContractsBarChart concernsExpectedAmount={true} title={"CA devisé par mois (€)"} content={"CA devisé"} data={monthlySentContracts!} objective={MONTHLY_EXPECTED_CA} />
                         <ContractsBarChart concernsExpectedAmount={false} title={"CA signé par mois (€)"} content={"CA signé"} data={monthlyWonContracts!} objective={MONTHLY_SIGNED_CA} />
+                    </div>
+                    <div className={"comparing-charts"}>
+                        <DuoLineChart title={"CA devisé et signé par mois (€)"} signedData={monthlyWonContracts} sentData={monthlySentContracts}/>
                     </div>
                     <div className={"global-tables"}>
                         <DealsTable

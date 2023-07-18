@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Contract from '../../../interfaces/contract';
+import Contract from '../../../../interfaces/contract';
 import { Spin } from 'react-cssfx-loading';
-import { getContracts } from '../../../config/hubspotConfig';
-import Period from '../../../interfaces/period';
+import { getContracts } from '../../../../config/hubspotConfig';
+import Period from '../../../../interfaces/period';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
-import {contractsStagesValues} from "../../../constants/hubspotAPIValues";
+import {contractsStagesValues} from "../../../../constants/hubspotAPIValues";
 
 const StyledTable = styled.div`
   
@@ -100,6 +100,18 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
         })
         : null;
 
+    const printStageValue = (deal: Contract) : string => {
+        if(deal.stage.localeCompare("contractsent")===0){
+            return "Contrat envoyé"
+        } else if ((deal.stage.localeCompare("closedlost")===0)){
+            return "Opportunité perdue"
+        } else if ((deal.stage.localeCompare("closedwon")===0)){
+            return "Devis signé"
+        } else {
+            return "Autre"
+        }
+    }
+
     /**
      * Building table and handling row sorting by column
      */
@@ -158,6 +170,18 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
                                     </TableCell>
                                 </>
                             )}
+                            {
+                                dealStage===null &&
+                                <TableCell className={'table-title'}>
+                                    <TableSortLabel
+                                        active={sortConfig?.key==='stage'}
+                                        direction={sortConfig?.key==='stage' ? sortConfig.direction : 'asc'}
+                                        onClick={() => handleSort('stage')}
+                                    >
+                                        État
+                                    </TableSortLabel>
+                                </TableCell>
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -187,6 +211,10 @@ const DealsTable: React.FC<Props> = ({ dealStage, title, period, handleError }) 
                                             </TableCell>
                                         </>
                                     )}
+                                    {
+                                        dealStage===null &&
+                                        <TableCell>{printStageValue(deal)}</TableCell>
+                                    }
                                 </TableRow>
                             )}})
                         ) : (

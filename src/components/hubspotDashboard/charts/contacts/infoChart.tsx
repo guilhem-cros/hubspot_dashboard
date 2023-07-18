@@ -24,7 +24,7 @@ const StyledList = styled.div`
 `
 
 interface Props {
-    content: string,
+    value: string,
     objective: number|null,
     currentTotal: number,
     toConvert: number
@@ -32,13 +32,24 @@ interface Props {
 
 /**
  * React component : details tile displaying several information
- * @param content title of the tile
+ * @param value the name value of the studied lifecycle stage
  * @param objective number by month aimed concerning the object described by the tile
  * @param currentTotal total number of object
  * @param toConvert number of object to convert into next stage
  * @constructor
  */
-const InfoChart :React.FC<Props> = ({content, objective, currentTotal, toConvert})=>{
+const InfoChart :React.FC<Props> = ({value, objective, currentTotal, toConvert})=>{
+
+    const getToConvertLabel = () : [string, string] => {
+        if(value.localeCompare("lead")===0){
+            return ["A qualifier", "Taux de qualification"]
+        } else if(value.localeCompare("opportunity")===0){
+            return ["A deviser", "Taux de devis"]
+        } else {
+            return ["A convertir", "Taux de conversion"]
+        }
+    }
+
 
     const concreteObjective = objective == null ? "aucun" : objective + " par mois";
     const transformationRate = ((currentTotal-toConvert)/currentTotal)*100;
@@ -49,8 +60,8 @@ const InfoChart :React.FC<Props> = ({content, objective, currentTotal, toConvert
             <h3 className={"info-label"}>Total à date : {currentTotal}</h3>
             { toConvert!==0 &&
                 <>
-                    <h3 className={"info-label"}>A convertir à date : {toConvert}</h3>
-                    <h3 className={"info-label"}>Taux de transformation moyen: {transformationRate.toFixed(0)} %</h3>
+                    <h3 className={"info-label"}>{getToConvertLabel()[0]} : {toConvert}</h3>
+                    <h3 className={"info-label"}>{getToConvertLabel()[1]} : {transformationRate.toFixed(0)} %</h3>
                 </>
             }
             <div className={"chart-icon"}><TbListDetails color={"white"} size={"1.8em"}/></div>

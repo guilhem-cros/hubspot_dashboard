@@ -11,7 +11,7 @@ import {
 
 
 import styled from 'styled-components';
-import LifecycleCount from "../../../interfaces/lifecycleCount";
+import LifecycleCount from "../../../../interfaces/lifecycleCount";
 
 
 const StyledChart = styled.div`
@@ -95,15 +95,15 @@ const LifecycleBarChart :React.FC<Props> = ({title, content, data, objective})=>
     return (
         <StyledChart>
             <div className={"bar-chart chart"}>
-                <h2>{"Nombre de nouveaux " + title.toLowerCase() + " par mois"}</h2>
+                <h2>{title + " par mois"}</h2>
                 <ResponsiveContainer width="100%" height={400}>
                     <BarChart
                         data={data}
                         margin={{
-                            top: 10,
-                            right: 30,
-                            left: 20,
-                            bottom: 10,
+                            top: 8,
+                            right: 25,
+                            left: 15,
+                            bottom: 8,
                         }}
                         barSize={30}
                     >
