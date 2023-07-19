@@ -6,6 +6,7 @@ import SignIn from "./pages/SignIn";
 import HubspotDashboard from "./pages/HubspotDashboard";
 import Error404 from "./pages/Error404";
 import {useAuth} from "./auth/AuthContext";
+import ActivityDashboard from "./pages/ActivityDashboard";
 
 function App() {
     const { isAuthenticated } = useAuth();
@@ -26,6 +27,10 @@ function App() {
                 <Route
                     path={"/dashboard/hubspot"}
                     element={isAuthenticated ? <HubspotDashboard/> : <Navigate to="/signin" />}
+                />
+                <Route
+                    path={"/dashboard/activity"}
+                    element={isAuthenticated ? <ActivityDashboard/> : <Navigate to="/signin" />}
                 />
                 <Route path={"*"} element={<Error404/>}/>
             </Routes>
