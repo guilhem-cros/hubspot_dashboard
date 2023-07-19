@@ -7,13 +7,14 @@ import {
     Paper,
     Typography,
 } from "@mui/material";
-import {useState} from "react";
+import React, {useState} from "react";
 
 const CustomInput: React.FC<{
     isIconActive: boolean;
     label: string;
     placeholder: string;
-}> = ({ isIconActive, label, placeholder }) => {
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+}> = ({ isIconActive, label, placeholder, onChange }) => {
 
     const [showPW, setShowPW] = useState(false);
 
@@ -38,6 +39,7 @@ const CustomInput: React.FC<{
                     <InputBase
                         type={isIconActive && !showPW ? "password" : "text"}
                         placeholder={placeholder}
+                        onChange={onChange}
                         fullWidth
                         sx={{
                             bgcolor: "#233447",

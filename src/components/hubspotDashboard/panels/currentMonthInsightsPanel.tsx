@@ -167,7 +167,7 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
         return (
             <div className={"growth-charts"}>
                 <NumberChart
-                    title={lifecycleStage.title}
+                    title={lifecycleStage.title.localeCompare("Contacts") ? "Nouveaux contacts" : lifecycleStage.title}
                     subTitle={""}
                     displayedValue={monthlyCount[monthlyCount.length-1].count + (lifecycleStage.objective === null ? "" : " / " + lifecycleStage.objective)}
                     isLoading={false}
@@ -210,7 +210,7 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
                 />
                 <div className={"progression"}>
                     <NumberChart
-                        title={"Progression vers l'objectif"}
+                        title={"% objectif " + (title.localeCompare("Montant devisé")===0 ? "devis" : "ventes")}
                         subTitle={""}
                         displayedValue={amount!==undefined ? ((amount! / objective*100).toFixed(0) + " %") : ""}
                         isLoading={currentMonthContractsAmount===null}

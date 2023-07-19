@@ -2,11 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import LifecycleBarChart from "../charts/contacts/lifecycleBarChart";
 import {lifecycleStagesCodesAndValues} from "../../../constants/hubspotAPIValues";
-import LifecycleCount, {getLifecycleCountByStage, getStageCurrentTotalAndToConvertCount} from "../../../interfaces/lifecycleCount";
+import LifecycleCount, {getStageCurrentTotalAndToConvertCount} from "../../../interfaces/lifecycleCount";
 import LifecycleStage, {createLifecycleStage} from "../../../interfaces/lifecycleStage";
 import InfoChart from "../charts/contacts/infoChart";
-import NumberChart from "../charts/numberChart";
-import {BsGraphUpArrow} from "react-icons/bs";
 
 const StyledPanel = styled.div`
 
@@ -134,7 +132,7 @@ const ContactPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentLifecycl
                                 {buildBarDiagram(lifecycleStage.code, lifecycleStage.title, lifecycleStage.objective, lifecycleStage.content)}
                                 <div className={"side-chart"}>
                                     <InfoChart value={lifecycleStage.value} objective={lifecycleStage.objective} currentTotal={lifecycleStage.currentTotal} toConvert={lifecycleStage.toConvert}/>
-                                    <NumberChart
+                                    {/*<NumberChart
                                         displayedValue={(((getLifecycleCountByStage(last31DaysStagesCount!, lifecycleStage.code)!.count)/lifecycleStage.currentTotal) * 100).toFixed(0)+" %"}
                                         title={"Croissance totale de " + lifecycleStage.title.toLowerCase()}
                                         subTitle={"Sur les 31 derniers jours"}
@@ -142,7 +140,7 @@ const ContactPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentLifecycl
                                         icon={<BsGraphUpArrow color={"white"} size={"1.8em"}/>}
                                         color={"#BD2651"}
                                         conditionalColoring={false}
-                                    />
+                                    />*/}
                                 </div>
                                 {
                                     drawLine()

@@ -45,6 +45,8 @@ const InfoChart :React.FC<Props> = ({value, objective, currentTotal, toConvert})
             return ["A qualifier", "Taux de qualification"]
         } else if(value.localeCompare("opportunity")===0){
             return ["A deviser", "Taux de devis"]
+        } else if(value.localeCompare("other")===0) {
+            return ["A transformer", "Taux de transformation"]
         } else {
             return ["A convertir", "Taux de conversion"]
         }

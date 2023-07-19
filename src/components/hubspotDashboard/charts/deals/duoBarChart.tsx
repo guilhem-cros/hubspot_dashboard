@@ -2,10 +2,31 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import MonthlyContracts from "../../../../interfaces/monthlyContracts";
 import Period from "../../../../interfaces/period";
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Legend,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
+} from "recharts";
 
 const StyledChart = styled.div`
-
+  .custom-tooltip {
+    background-color: white;
+    border: solid 1px grey;
+  }
+  
+  .sent-bar{
+    color: #8884d8;
+  }
+  
+  .won-bar{
+    color: #82ca9d;
+  }
+  
 `
 
 interface Props {
@@ -21,7 +42,7 @@ interface Props {
  * @param sentData the contract sent per month
  * @constructor
  */
-const DuoLineChart: React.FC<Props> = ({title, signedData, sentData}) => {
+const DuoBarChart: React.FC<Props> = ({title, signedData, sentData}) => {
 
     /**
      * The amount in € per month
@@ -116,12 +137,9 @@ const DuoLineChart: React.FC<Props> = ({title, signedData, sentData}) => {
         if (tooltipProps.active && tooltipProps.payload && tooltipProps.payload.length) {
             return (
                 <div className="custom-tooltip">
-                    <p className="intro">{`${formatXAxis(new Date(tooltipProps.label!))}`}</p>
-                    {tooltipProps.payload.map((entry) => (
-                        <p key={entry.name} className="label">
-                            {`${entry.name}: ${entry.value}`}
-                        </p>
-                    ))}
+                    <p className="intro">{`${formatXAxis(new Date(tooltipProps.label!))}` }</p>
+                    <p className="label sent-bar">{`CA devisé : ${tooltipProps.payload[0].value} €`}</p>
+                    <p className="label won-bar">{`CA signé : ${tooltipProps.payload[1].value} €`}</p>
                 </div>
             );
         }
@@ -140,7 +158,7 @@ const DuoLineChart: React.FC<Props> = ({title, signedData, sentData}) => {
                         </div>
                         :
                         <ResponsiveContainer width="100%" height={400}>
-                            <LineChart
+                            <BarChart
                                 data={mergedData}
                                 margin={{
                                     top: 8,
@@ -150,13 +168,13 @@ const DuoLineChart: React.FC<Props> = ({title, signedData, sentData}) => {
                                 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="period.dateTo" type="category" tickFormatter={formatXAxis} allowDuplicatedCategory={false}/>
+                                <XAxis dataKey="period.dateTo" tickFormatter={formatXAxis}/>
                                 <YAxis dataKey={"value"}/>
-                                <Tooltip content={<CustomTooltip />}/>
+                                <Tooltip content={<CustomTooltip/>}/>
                                 <Legend align="right" verticalAlign="top"/>
-                                <Line type="monotone" dataKey="value" name="CA devisé" stroke="#8884d8" strokeWidth={2} />
-                                <Line type="monotone" dataKey="signedValue" name="CA signé" stroke="#82ca9d" strokeWidth={2} />
-                            </LineChart>
+                                <Bar dataKey="value" name="CA devisé" fill="#8884d8" strokeWidth={1} />
+                                <Bar dataKey="signedValue" name="CA signé" fill="#82ca9d" strokeWidth={1} />
+                            </BarChart>
                         </ResponsiveContainer>
                     }
             </div>
@@ -165,4 +183,4 @@ const DuoLineChart: React.FC<Props> = ({title, signedData, sentData}) => {
 
 }
 
-export default DuoLineChart;
+export default DuoBarChart;

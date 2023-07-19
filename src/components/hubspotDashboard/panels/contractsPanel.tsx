@@ -7,7 +7,7 @@ import ContractsBarChart from "../charts/deals/contractsBarChart";
 import { MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA } from "../../../constants/objectives";
 import {Hypnosis} from "react-cssfx-loading";
 import DealsTable from "../charts/deals/dealsTable";
-import DuoLineChart from "../charts/deals/duoLineChart";
+import DuoBarChart from "../charts/deals/duoBarChart";
 
 const StyledContractsPanel = styled.div`
   margin: 0 1% 1%;
@@ -135,7 +135,7 @@ const ContractsPanel: React.FC<Props> = ({handleError}) => {
                         <ContractsBarChart concernsExpectedAmount={false} title={"CA signé par mois (€)"} content={"CA signé"} data={monthlyWonContracts!} objective={MONTHLY_SIGNED_CA} />
                     </div>
                     <div className={"comparing-charts"}>
-                        <DuoLineChart title={"CA devisé et signé par mois (€)"} signedData={monthlyWonContracts} sentData={monthlySentContracts}/>
+                        <DuoBarChart title={"CA devisé et signé par mois (€)"} signedData={monthlyWonContracts} sentData={monthlySentContracts}/>
                     </div>
                     <div className={"global-tables"}>
                         <DealsTable

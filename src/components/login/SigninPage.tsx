@@ -1,10 +1,46 @@
 import { Box, Button, colors, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import React from "react";
+import React, {useState} from "react";
 import CustomInput from "./CustomInput";
 import logo from "../../assets/images/stride_logo.png"
+import {useAuth} from "../../auth/AuthContext";
+import {useNavigate} from "react-router-dom";
 
-const SigninPage: React.FC = () => {
+interface Props{
+    notifyError: (error: string) => void;
+}
+
+const SigninPage: React.FC<Props> = ({notifyError}) => {
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const [enteredId, setEnteredId] = useState('');
+    const [enteredPassword, setEnteredPassword] = useState('');
+
+    const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnteredId(event.target.value);
+    };
+
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnteredPassword(event.target.value);
+    };
+
+    const signIn = () => {
+        const correctId = process.env.REACT_APP_BASIC_ID;
+        const correctPassword = process.env.REACT_APP_BASIC_PASSWORD;
+
+        if (enteredId.localeCompare(correctId!)===0 && enteredPassword.localeCompare(correctPassword!)===0) {
+            console.log('Authentication successful!');
+            login();
+            navigate('/');
+        } else {
+            console.log('Invalid ID or password.');
+            notifyError("Identifiant ou mot de passe invalide");
+        }
+
+    }
+
     return (
 
         <Grid
@@ -70,11 +106,13 @@ const SigninPage: React.FC = () => {
                         label="Identifiant"
                         placeholder="Entrez votre identifiant..."
                         isIconActive={false}
+                        onChange={handleIdChange}
                     />
                     <CustomInput
                         label="Mot de passe"
                         placeholder="Entrez votre mot de passe..."
                         isIconActive={true}
+                        onChange={handlePasswordChange}
                     />
 
                     <Box
@@ -90,6 +128,7 @@ const SigninPage: React.FC = () => {
                         variant="contained"
                         fullWidth
                         sx={{ mt: 4, boxShadow: `0 0 20px ${colors.red[500]}`, fontWeight: "bold", color: "white", backgroundColor: "red" }}
+                        onClick={signIn}
                     >
                         Connexion
                     </Button>
