@@ -32,7 +32,7 @@ This React application uses the following main dependencies:
 
 ## API Interaction
 
-The React application interacts with the Express server to retrieve data and analytics from the HubSpot API. The server endpoints are defined in the Express server [README.md file](https://github.com/guilhem-cros/BackEnd-Econet). The application makes HTTP requests to the server using axios.
+The React application interacts with the Express server to retrieve data and analytics from the HubSpot API. The server endpoints are defined in the Express server [README.md file](https://github.com/guilhem-cros/Stride-Hubspot-Proxy). The application makes HTTP requests to the server using axios.
 
 ## Note
 
