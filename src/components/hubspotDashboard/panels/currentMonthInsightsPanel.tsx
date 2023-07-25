@@ -7,8 +7,8 @@ import {PiTarget} from "react-icons/pi";
 import {MdAttachMoney} from "react-icons/md";
 import {contractsStagesValues, lifecycleStagesCodesAndValues} from "../../../constants/hubspotAPIValues";
 import LifecycleCount, {getStageCurrentTotalAndToConvertCount} from "../../../interfaces/lifecycleCount";
-import {MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA} from "../../../constants/objectives";
 import DealsTable from "../charts/deals/dealsTable";
+import Objectives from "../../../interfaces/objectives";
 
 const StyledPanel = styled.div`
 
@@ -112,7 +112,8 @@ interface Props {
     lifecycleStagesPerMonth: LifecycleCount[][]|null,
     currentMonthContractsAmount: {closedWonAmount: number, contractSentAmount: number}|null,
     currentLifecycleStagesCount: LifecycleCount[]|null,
-    notifyError: (error: string) => void;
+    notifyError: (error: string) => void,
+    objectives: Objectives
 
 }
 
@@ -122,9 +123,10 @@ interface Props {
  * @param currentMonthContractsAmount Amount (€) of contract won and sent during current month
  * @param currentLifecycleStagesCount Variable containing lifecycle stages current counts for contacts
  * @param notifyError callback function used in case of error
+ @param objectives the object containing every objective for each studied stat
  * @constructor
  */
-const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentMonthContractsAmount, currentLifecycleStagesCount, notifyError}) => {
+const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentMonthContractsAmount, currentLifecycleStagesCount, notifyError, objectives}) => {
 
     const now = new Date();
     const firstDayOfTheMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -196,7 +198,7 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
      * @param objective the targeted objective per month
      * @param amount the displayed value on the chart
      */
-    const buildContractsAmountGrowthCharts = (title: string, objective: number, amount: number |undefined) => {
+    const buildContractsAmountGrowthCharts = (title: string, objective: number|null, amount: number |undefined) => {
         return (
             <div className={"contracts-growth-charts"}>
                 <NumberChart
@@ -212,7 +214,7 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
                     <NumberChart
                         title={"% objectif " + (title.localeCompare("Montant devisé")===0 ? "devis" : "ventes")}
                         subTitle={""}
-                        displayedValue={amount!==undefined ? ((amount! / objective*100).toFixed(0) + " %") : ""}
+                        displayedValue={objective === null ? "/" : amount!==undefined ? ((amount! / objective*100).toFixed(0) + " %") : ""}
                         isLoading={currentMonthContractsAmount===null}
                         icon={<PiTarget color={"white"} size={"1.8em"}/>}
                         color={"#E85411"}
@@ -231,7 +233,7 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
                     <div className={"last-month-stage-insight-charts"}>
                         {Array.from(lifecycleStagesCodesAndValues.entries()).map(([key, value]) => {
                             const currentCounts= getStageCurrentTotalAndToConvertCount(currentLifecycleStagesCount!, value)
-                            const lifecycleStage: LifecycleStage = createLifecycleStage(key, value, currentCounts.currentTotal, currentCounts.toConvert);
+                            const lifecycleStage: LifecycleStage = createLifecycleStage(key, value, currentCounts.currentTotal, currentCounts.toConvert, objectives);
                             return(
                                 <div className={"stage-growth"} key={key}>
                                     {buildGrowthCharts(lifecycleStage)}
@@ -240,8 +242,8 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
                         })}
                     </div>
                     <div className={"last-month-contract-insight-charts"}>
-                        {buildContractsAmountGrowthCharts("Montant devisé", MONTHLY_EXPECTED_CA, currentMonthContractsAmount?.contractSentAmount)}
-                        {buildContractsAmountGrowthCharts("Montant signé", MONTHLY_SIGNED_CA, currentMonthContractsAmount?.closedWonAmount)}
+                        {buildContractsAmountGrowthCharts("Montant devisé", objectives.MONTHLY_EXPECTED_CA, currentMonthContractsAmount?.contractSentAmount)}
+                        {buildContractsAmountGrowthCharts("Montant signé", objectives.MONTHLY_SIGNED_CA, currentMonthContractsAmount?.closedWonAmount)}
                     </div>
                     <div className={"current-month-deals-insight"}>
                         <DealsTable handleError={notifyError} dealStage={null} title={"Devis envoyés sur le mois courant"} period={{dateTo: now, dateFrom: firstDayOfTheMonth}}/>

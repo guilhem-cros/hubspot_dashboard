@@ -1,9 +1,4 @@
-import {
-    MONTHLY_ADVANCED_PROSPECTS_OBJ, MONTHLY_CLIENTS_OBJ,
-    MONTHLY_CONTACTS_OBJ,
-    MONTHLY_LEADS_OBJ,
-    MONTHLY_PROSPECTS_OBJ
-} from "../constants/objectives";
+import Objectives from "./objectives";
 
 export default interface LifecycleStage{
 
@@ -49,8 +44,9 @@ export default interface LifecycleStage{
  * @param value the name of the stage
  * @param total the current total number of contact in this stage
  * @param toConvert the current number of contact to push from this stage to next stage
+ * @param objectives the object containing every objective for each studied stat
  */
-export function createLifecycleStage(code: string, value: string, total: number, toConvert: number): LifecycleStage {
+export function createLifecycleStage(code: string, value: string, total: number, toConvert: number, objectives: Objectives): LifecycleStage {
 
     const stage : LifecycleStage = {
         code: code,
@@ -63,27 +59,27 @@ export function createLifecycleStage(code: string, value: string, total: number,
     }
 
     if(code.localeCompare('hs_lifecyclestage_other_date')===0) {
-        stage.objective = MONTHLY_CONTACTS_OBJ;
+        stage.objective = objectives.MONTHLY_CONTACTS_OBJ;
         stage.content = 'Nombre de contacts';
         stage.title = 'Contacts';
     }
     else if(code.localeCompare('hs_lifecyclestage_lead_date')===0) {
-        stage.objective = MONTHLY_LEADS_OBJ;
+        stage.objective = objectives.MONTHLY_LEADS_OBJ;
         stage.content = 'Nombre de leads';
         stage.title = 'Leads';
     }
     else if(code.localeCompare('hs_lifecyclestage_opportunity_date')===0) {
-        stage.objective = MONTHLY_PROSPECTS_OBJ;
+        stage.objective = objectives.MONTHLY_PROSPECTS_OBJ;
         stage.content = 'Nombre de prospects';
         stage.title = 'Prospects';
     }
     else if(code.localeCompare('hs_lifecyclestage_subscriber_date')===0) {
-        stage.objective = MONTHLY_ADVANCED_PROSPECTS_OBJ;
+        stage.objective = objectives.MONTHLY_ADVANCED_PROSPECTS_OBJ;
         stage.content = 'Nombre de prospects avancés';
         stage.title = 'Prospects avancés';
     }
     else if(code.localeCompare('hs_lifecyclestage_customer_date')===0) {
-        stage.objective = MONTHLY_CLIENTS_OBJ;
+        stage.objective = objectives.MONTHLY_CLIENTS_OBJ;
         stage.content = 'Nombre de clients';
         stage.title = 'Clients';
     }

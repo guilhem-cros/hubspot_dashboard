@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {
     getContactToCustomerAvgTime,
     getContractsTotalAmount,
-    getCurrentCountByLifecycles, getCurrentMonthContractsAmount, getLifecycleStages,
+    getCurrentCountByLifecycles, getCurrentMonthContractsAmount, getLifecycleStages, getObjectives,
     getTwoYearsLifecycleStagesCountsByMonth
 } from "../../config/hubspotConfig";
 import LifecycleCount from "../../interfaces/lifecycleCount";
@@ -13,6 +13,7 @@ import {Hypnosis} from "react-cssfx-loading";
 import GlobalInsightsPanel from "./panels/globalInsightsPanel";
 import CurrentMonthInsightsPanel from "./panels/currentMonthInsightsPanel";
 import ContactPanel from "./panels/contactsPanel";
+import Objectives from "../../interfaces/objectives";
 
 const StyledList = styled.div`
 
@@ -113,6 +114,10 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
      */
     const [currentMonthContractsAmount, setCurentMonthContractsAmount] = useState<{closedWonAmount: number, contractSentAmount: number}|null>(null)
 
+    /**
+     * Objectives for each studied stat
+     */
+    const [objectives, setObjectives] = useState<Objectives | null>(null);
 
     /**
      * Called when mounting component : fetch datas
@@ -143,6 +148,11 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
     const fetchData = async () => {
 
         try {
+
+            if(objectives === null) {
+                const obj = await getObjectives();
+                setObjectives(obj);
+            }
 
             if (currentLifecycleStagesCount === null) {
                 const currentCount = await getCurrentCountByLifecycles();
@@ -224,6 +234,7 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
                                     currentMonthContractsAmount={currentMonthContractsAmount}
                                     currentLifecycleStagesCount={currentLifecycleStagesCount}
                                     notifyError={notifyError}
+                                    objectives={objectives!}
                                 />
                             </div>
                             <div className={"details-panel"}>
@@ -232,10 +243,11 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
                                     lifecycleStagesPerMonth={lifecycleStagesPerMonth}
                                     currentLifecycleStagesCount={currentLifecycleStagesCount}
                                     last31DaysStagesCount={last31DaysStagesCount}
+                                    objectives={objectives!}
                                 />
                                 <div className={"panel"}>
                                     <h2 className={"panel-title"}>Chiffre d'Affaire</h2>
-                                    <ContractsPanel handleError={notifyError}/>
+                                    <ContractsPanel handleError={notifyError} objectives={objectives!}/>
                                 </div>
                             </div>
                         </div>

@@ -5,6 +5,7 @@ import {lifecycleStagesCodesAndValues} from "../../../constants/hubspotAPIValues
 import LifecycleCount, {getStageCurrentTotalAndToConvertCount} from "../../../interfaces/lifecycleCount";
 import LifecycleStage, {createLifecycleStage} from "../../../interfaces/lifecycleStage";
 import InfoChart from "../charts/contacts/infoChart";
+import Objectives from "../../../interfaces/objectives";
 
 const StyledPanel = styled.div`
 
@@ -62,7 +63,8 @@ const StyledPanel = styled.div`
 interface Props {
     lifecycleStagesPerMonth: LifecycleCount[][]|null,
     currentLifecycleStagesCount: LifecycleCount[]|null,
-    last31DaysStagesCount: LifecycleCount[]|null
+    last31DaysStagesCount: LifecycleCount[]|null,
+    objectives: Objectives
 }
 
 /**
@@ -70,10 +72,10 @@ interface Props {
  * @param lifecycleStagesPerMonth the pure list got from the API request containing the count of contact per stage for each month
  * @param currentLifecycleStagesCount the list of the current count of contact per stage
  * @param last31DaysStagesCount the list of the count of contact per stage starting 31 days ago
+ @param objectives the object containing every objective for each studied stat
  * @constructor
  */
-const ContactPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentLifecycleStagesCount, last31DaysStagesCount}) => {
-
+const ContactPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentLifecycleStagesCount, last31DaysStagesCount, objectives} ) => {
     /**
      * Formats the lifecycleStagesPerMonth data by returning, ordered by date,
      * each LifecycleCount concerning a specified lifecycle stage
@@ -124,7 +126,7 @@ const ContactPanel: React.FC<Props> = ({lifecycleStagesPerMonth, currentLifecycl
             <div className={"diagrams"}>
                 {Array.from(lifecycleStagesCodesAndValues.entries()).map(([key, value]) => {
                     const currentCounts= getStageCurrentTotalAndToConvertCount(currentLifecycleStagesCount!, value)
-                    const lifecycleStage: LifecycleStage = createLifecycleStage(key, value, currentCounts.currentTotal, currentCounts.toConvert);
+                    const lifecycleStage: LifecycleStage = createLifecycleStage(key, value, currentCounts.currentTotal, currentCounts.toConvert, objectives);
                     return(
                         <div className={"panel contact-panel"} key={key}>
                             <h2 className={"panel-title"}>{lifecycleStage.title}</h2>

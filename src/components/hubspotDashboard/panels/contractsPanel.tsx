@@ -4,10 +4,10 @@ import MonthlyContracts from "../../../interfaces/monthlyContracts";
 import { getTwoYearsContractsByMonth } from "../../../config/hubspotConfig";
 import { contractsStagesValues } from "../../../constants/hubspotAPIValues";
 import ContractsBarChart from "../charts/deals/contractsBarChart";
-import { MONTHLY_EXPECTED_CA, MONTHLY_SIGNED_CA } from "../../../constants/objectives";
 import {Hypnosis} from "react-cssfx-loading";
 import DealsTable from "../charts/deals/dealsTable";
 import DuoBarChart from "../charts/deals/duoBarChart";
+import Objectives from "../../../interfaces/objectives";
 
 const StyledContractsPanel = styled.div`
   margin: 0 1% 1%;
@@ -45,15 +45,17 @@ const StyledContractsPanel = styled.div`
 `;
 
 interface Props {
+    objectives: Objectives,
     handleError : (error: string)=> void;
 }
 
 /**
  * React component : Builds the panel linked to deals containing charts and tables
  * @param handleError function handling error during data fetching
+ @param objectives the object containing every objective for each studied stat
  * @constructor
  */
-const ContractsPanel: React.FC<Props> = ({handleError}) => {
+const ContractsPanel: React.FC<Props> = ({handleError, objectives}) => {
 
     /**
      * List of contracts won per month, null if not fetched
@@ -131,8 +133,8 @@ const ContractsPanel: React.FC<Props> = ({handleError}) => {
             {isLoaded ?
                 <div>
                     <div className={"ca-charts"}>
-                        <ContractsBarChart concernsExpectedAmount={true} title={"CA devisé par mois (€)"} content={"CA devisé"} data={monthlySentContracts!} objective={MONTHLY_EXPECTED_CA} />
-                        <ContractsBarChart concernsExpectedAmount={false} title={"CA signé par mois (€)"} content={"CA signé"} data={monthlyWonContracts!} objective={MONTHLY_SIGNED_CA} />
+                        <ContractsBarChart concernsExpectedAmount={true} title={"CA devisé par mois (€)"} content={"CA devisé"} data={monthlySentContracts!} objective={objectives.MONTHLY_EXPECTED_CA} />
+                        <ContractsBarChart concernsExpectedAmount={false} title={"CA signé par mois (€)"} content={"CA signé"} data={monthlyWonContracts!} objective={objectives.MONTHLY_SIGNED_CA} />
                     </div>
                     <div className={"comparing-charts"}>
                         <DuoBarChart title={"CA devisé et signé par mois (€)"} signedData={monthlyWonContracts} sentData={monthlySentContracts}/>

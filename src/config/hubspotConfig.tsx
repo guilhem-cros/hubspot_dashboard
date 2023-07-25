@@ -4,13 +4,14 @@ import {
     contactsByStageEndPoint,
     contractsEndPoint,
     countEndPoint,
-    lifecycleStagesCountEndPoint
+    lifecycleStagesCountEndPoint, objectivesEndPoint
 } from "../constants/endpoints";
 import {generateTwoYearsFromMonths} from "../interfaces/period";
 import Contract from "../interfaces/contract";
 import MonthlyContracts from "../interfaces/monthlyContracts";
 import Contact, {getAvgConvertionTime} from "../interfaces/contact";
 import {contractsStagesValues} from "../constants/hubspotAPIValues";
+import Objectives from "../interfaces/objectives";
 
 /**
  * Calls proxy/hubspot API. Get the lifecycle stages metrics for contacts concerning a specified period.
@@ -200,6 +201,16 @@ async function getTwoYearsContractsByMonth(dealStage: string|null): Promise<Mont
     return contractsByMonth;
 }
 
+async function getObjectives() : Promise<Objectives>{
+    const response = await axios.get(objectivesEndPoint);
+    if(response.status === 200) {
+        return response.data as Objectives;
+    } else {
+        console.error(response.data);
+        throw new Error(response.data)
+    }
+}
+
 
 export {
     getLifecycleStages,
@@ -210,5 +221,6 @@ export {
     getTwoYearsContractsByMonth,
     getContactToCustomerAvgTime,
     getCurrentMonthContractsAmount,
-    getContracts
+    getContracts,
+    getObjectives
 };

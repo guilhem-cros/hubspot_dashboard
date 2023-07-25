@@ -4,4 +4,6 @@ const countEndPoint = proxyBaseURL + '/contacts/lifecyclestages/total/count/';
 const contractsEndPoint = proxyBaseURL + '/deals/by/stage'
 const contactsByStageEndPoint = proxyBaseURL + '/contacts/by/lifecyclestage';
 
-export {lifecycleStagesCountEndPoint, countEndPoint, contractsEndPoint, contactsByStageEndPoint}
+const objectivesEndPoint = proxyBaseURL + '/constants';
+
+export {lifecycleStagesCountEndPoint, countEndPoint, contractsEndPoint, contactsByStageEndPoint, objectivesEndPoint}
