@@ -13,10 +13,19 @@ const CustomInput: React.FC<{
     isIconActive: boolean;
     label: string;
     placeholder: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-}> = ({ isIconActive, label, placeholder, onChange }) => {
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onEnter?: () => void;
+}> = ({ isIconActive, label, placeholder, onChange, onEnter }) => {
 
     const [showPW, setShowPW] = useState(false);
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            if (onEnter) {
+                onEnter();
+            }
+        }
+    };
 
     return (
         <Box
@@ -60,6 +69,7 @@ const CustomInput: React.FC<{
                                 </InputAdornment>
                             )
                         }
+                        onKeyDown={handleKeyDown}
                     />
                 </Paper>
             </Box>

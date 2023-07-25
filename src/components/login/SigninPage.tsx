@@ -107,12 +107,14 @@ const SigninPage: React.FC<Props> = ({notifyError}) => {
                         placeholder="Entrez votre identifiant..."
                         isIconActive={false}
                         onChange={handleIdChange}
+                        onEnter={signIn}
                     />
                     <CustomInput
                         label="Mot de passe"
                         placeholder="Entrez votre mot de passe..."
                         isIconActive={true}
                         onChange={handlePasswordChange}
+                        onEnter={signIn}
                     />
 
                     <Box
