@@ -169,7 +169,7 @@ const CurrentMonthInsightsPanel: React.FC<Props> = ({lifecycleStagesPerMonth, cu
         return (
             <div className={"growth-charts"}>
                 <NumberChart
-                    title={lifecycleStage.title.localeCompare("Contacts") ? "Nouveaux contacts" : lifecycleStage.title}
+                    title={lifecycleStage.title.localeCompare("Contacts")===0 ? "Nouveaux contacts" : lifecycleStage.title}
                     subTitle={""}
                     displayedValue={monthlyCount[monthlyCount.length-1].count + (lifecycleStage.objective === null ? "" : " / " + lifecycleStage.objective)}
                     isLoading={false}

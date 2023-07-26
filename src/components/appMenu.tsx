@@ -107,7 +107,7 @@ const AppMenu: React.FC<Props> = () => {
                     <img id={"named-logo"} src={namedLogo} width={"100%"} alt="Logo Stride"/>
                 </div>
                 <Link id="hubspot-dashboard" to="/dashboard/hubspot">Dashboard Hubspot </Link>
-                <Link id="activity-dashboard" to="/dashboard/activity">Dashboard activité</Link>
+                <Link id="objectives-management" to="/objectives">Objectifs</Link>
             </Menu>
         </StyledMenu>
     )

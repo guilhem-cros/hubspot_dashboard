@@ -201,6 +201,10 @@ async function getTwoYearsContractsByMonth(dealStage: string|null): Promise<Mont
     return contractsByMonth;
 }
 
+/**
+ * Get every objective variable from the server
+ * @return an Objectives object completed with variable fetched
+ */
 async function getObjectives() : Promise<Objectives>{
     const response = await axios.get(objectivesEndPoint);
     if(response.status === 200) {
@@ -208,6 +212,32 @@ async function getObjectives() : Promise<Objectives>{
     } else {
         console.error(response.data);
         throw new Error(response.data)
+    }
+}
+
+/**
+ * Updates specified objective on the server
+ * @param updatedObjectives the objectives to update
+ * @return true if success, false is not
+ */
+async function updateObjectives(updatedObjectives: Objectives) : Promise<boolean> {
+
+    const updatedData = {
+        MONTHLY_CONTACTS_OBJ : updatedObjectives.MONTHLY_CONTACTS_OBJ,
+        MONTHLY_LEADS_OBJ : updatedObjectives.MONTHLY_LEADS_OBJ,
+        MONTHLY_PROSPECTS_OBJ : updatedObjectives.MONTHLY_PROSPECTS_OBJ,
+        MONTHLY_ADVANCED_PROSPECTS_OBJ : updatedObjectives.MONTHLY_ADVANCED_PROSPECTS_OBJ,
+        MONTHLY_CLIENTS_OBJ : updatedObjectives.MONTHLY_CLIENTS_OBJ,
+        MONTHLY_EXPECTED_CA : updatedObjectives.MONTHLY_EXPECTED_CA,
+        MONTHLY_SIGNED_CA : updatedObjectives.MONTHLY_SIGNED_CA
+    }
+
+    const response = await axios.put(objectivesEndPoint, updatedData);
+    if(response.status === 200) {
+        return true;
+    } else {
+        console.error(response.data);
+        return false;
     }
 }
 
@@ -222,5 +252,6 @@ export {
     getContactToCustomerAvgTime,
     getCurrentMonthContractsAmount,
     getContracts,
-    getObjectives
+    getObjectives,
+    updateObjectives
 };
