@@ -66,11 +66,15 @@ const ObjectivesForm: React.FC<Props> = ()=>{
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const submission = await updateObjectives(values!);
-        if(submission){
-            toast.success("Les objectifs ont été mis à jour.");
-        } else {
-            toast.error("Une erreur est survenu durant la mise à jour des objectifs.");
+        try {
+            const submission = await updateObjectives(values!);
+            if (submission) {
+                toast.success("Les objectifs ont été mis à jour.");
+            } else {
+                toast.error("Une erreur est survenu durant la mise à jour des objectifs.");
+            }
+        } catch (err){
+            toast.error("Une erreur innatendue est survenue.")
         }
     };
 
