@@ -232,7 +232,7 @@ async function updateObjectives(updatedObjectives: Objectives) : Promise<boolean
         MONTHLY_SIGNED_CA : updatedObjectives.MONTHLY_SIGNED_CA
     }
 
-    const response = await axios.patch(objectivesEndPoint, updatedData);
+    const response = await axios.put(objectivesEndPoint, updatedData);
     if(response.status === 200) {
         return true;
     } else {
