@@ -119,16 +119,34 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
      */
     const [objectives, setObjectives] = useState<Objectives | null>(null);
 
+    const [loading, setLoading] = useState<boolean>(false);
+
     /**
      * Called when mounting component : fetch datas
      */
     useEffect(()=> {
-        if(!isLoaded) {
+        if(!isLoaded && !loading) {
             fetchData().then(()=> {
                 setIsLoaded(true);
+                setLoading(false);
             })
         }
+        setLoading(true);
     });
+
+    useEffect(()=> {
+        if(isLoaded && !criticalError){
+            if(wonContractsAmount === null){
+                fetchWonContractsAmount();
+            }
+            if(avgSignTime === null){
+                fetchAvgConvertionTime();
+            }
+            if(currentMonthContractsAmount === null){
+                fetchCurrentMonthContractsAmounts();
+            }
+        }
+    }, [wonContractsAmount, avgSignTime, avgConvertionTime, currentMonthContractsAmount])
 
     /**
      * When critical data has been loaded : fetch other data
@@ -147,40 +165,40 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
      */
     const fetchData = async () => {
 
-        try {
+            try {
 
-            if(objectives === null) {
-                const obj = await getObjectives();
-                setObjectives(obj);
+                if (objectives === null) {
+                    const obj = await getObjectives();
+                    setObjectives(obj);
+                }
+
+                if (currentLifecycleStagesCount === null) {
+                    const currentCount = await getCurrentCountByLifecycles();
+                    setCurrentLifecycleStagesCount(currentCount);
+                }
+
+                if (lifecycleStagesPerMonth === null) {
+                    const perMonthCount = await getTwoYearsLifecycleStagesCountsByMonth()
+                    setLifecycleStagesPerMonth(perMonthCount);
+                }
+
+                if (last31DaysStagesCount === null) {
+                    const now = new Date();
+                    const monthAgo = new Date();
+                    monthAgo.setDate(now.getDate() - 31);
+                    const last31DaysStagesCount = await getLifecycleStages(now.getTime(), monthAgo.getTime());
+                    setLast31DaysStagesCount(last31DaysStagesCount);
+                }
+            } catch (error) {
+                setCriticalError(true);
+                notifyError("Impossible d'accéder aux données. Patientez quelques minutes puis rafraichissez la page.")
+                if (error instanceof Error) {
+                    console.error(error)
+                } else {
+                    console.error("Unexpected error: " + error);
+                }
             }
 
-            if (currentLifecycleStagesCount === null) {
-                const currentCount = await getCurrentCountByLifecycles();
-                setCurrentLifecycleStagesCount(currentCount);
-            }
-
-            if (lifecycleStagesPerMonth === null) {
-                const perMonthCount = await getTwoYearsLifecycleStagesCountsByMonth()
-                setLifecycleStagesPerMonth(perMonthCount);
-            }
-
-            if(last31DaysStagesCount === null) {
-                const now = new Date();
-                const monthAgo = new Date();
-                monthAgo.setDate(now.getDate()-31);
-                const last31DaysStagesCount = await getLifecycleStages(now.getTime(), monthAgo.getTime());
-                setLast31DaysStagesCount(last31DaysStagesCount);
-            }
-
-        } catch (error){
-            setCriticalError(true);
-            notifyError("Impossible d'accéder aux données. Patientez quelques minutes puis rafraichissez la page.")
-            if(error instanceof Error){
-                console.error(error)
-            } else {
-                console.error("Unexpected error: " + error);
-            }
-        }
     }
 
     const fetchWonContractsAmount = () => {
@@ -190,7 +208,6 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
             })
             .catch((error)=>{
                 console.error(error)
-                notifyError("Le montant du CA n'a pas pu être récupéré.");
             })
     }
 
@@ -202,7 +219,6 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
             })
             .catch((error)=>{
                 console.error(error)
-                notifyError("Le temps moyen de négociation n'a pas pu être récupéré.");
             })
     }
 
@@ -212,7 +228,6 @@ const Dashboard :React.FC<Props> = ({notifyError})=>{
                 setCurentMonthContractsAmount(value);
             }).catch((error)=>{
             console.error(error)
-            notifyError("Les transactions concernant le mois courant n'ont pas pu être récupérées.");
         })
     }
 

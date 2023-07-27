@@ -55,7 +55,7 @@ const HubspotDashboard = () => {
             <Dashboard notifyError={notifyError}></Dashboard>
             <ToastContainer
                 position="bottom-right"
-                autoClose={7000}
+                autoClose={6000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
